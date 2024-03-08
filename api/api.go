@@ -65,6 +65,9 @@ var (
     ErrInvalidCredentials = func (w http.ResponseWriter, err error)  {
 		writeError(w, err.Error(), 401)
 	}
+    ErrUnAuthorizedCredentials = func (w http.ResponseWriter, err error)  {
+		writeError(w, err.Error(), 403)
+	}
 	ErrInternalServer = func (w http.ResponseWriter, err error)  {
 		writeError(w, err.Error(), 500)
 	}
