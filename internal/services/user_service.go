@@ -33,16 +33,16 @@ func CreateUser(db *sql.DB, user *api.User) (*api.ResForCreateUser, error) {
 
 	// Generate UUID for the user ID
 	id := uuid.New()
-
+	accessToken := uuid.New()
 	// Create a prepared statement to insert the user into the database
-	stmt, err := db.Prepare("INSERT INTO users (id, username, email, password) VALUES (?, ?, ?, ?)")
+	stmt, err := db.Prepare("INSERT INTO users (id, username, email, password, access_token) VALUES (?, ?, ?, ?, ?)")
 	if err != nil {
 		return nil, err // Failed to prepare statement
 	}
 	defer stmt.Close()
 
 	// Execute the prepared statement with user data
-	_, err = stmt.Exec(id, user.Username, user.Email, string(hashedPassword))
+	_, err = stmt.Exec(id, user.Username, user.Email, string(hashedPassword), accessToken)
 	if err != nil {
 		return nil, err // Failed to insert user into database
 	}

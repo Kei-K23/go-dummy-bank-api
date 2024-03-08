@@ -39,6 +39,7 @@ func createUsersTable(db *sql.DB)  {
 			username VARCHAR(255) NOT NULL,
 			email VARCHAR(255) NOT NULL UNIQUE,
 			password VARCHAR(255) NOT NULL,
+			access_token VARCHAR(255) NOT NULL UNIQUE,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)

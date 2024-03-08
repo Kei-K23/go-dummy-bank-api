@@ -12,10 +12,30 @@ type User struct {
 	Password string `json:"password"`
 }
 
+type DBUser struct {
+	Id string `json:"id"`
+	Username string `json:"username"`
+	Email string `json:"email"`
+	Password string `json:"password"`
+	AccessToken string `json:"access_token"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
 // response data for create user
 type ResForCreateUser struct { 
 	Username string `json:"username"`
 	Email string `json:"email"`
+}
+
+type ReqForLogin struct { 
+	Email string `json:"email"`
+	Password string `json:"password"`
+}
+
+type ResForLogin struct { 
+	Id string `json:"id"`
+    AccessToken string `json:"access_token"`
 }
 
 // error
