@@ -56,6 +56,40 @@ func CreateUser(db *sql.DB, user *api.User) (*api.ResForCreateUser, error) {
 	return createdUser, nil
 }
 
+// CreateUser creates a new user.
+func UpdateUser(db *sql.DB, user *api.ResForCreateUser, id string) (*api.ResForCreateUser, error) {
+	// Perform some basic validation
+	if user == nil {
+		return nil, errors.New("user object is nil")
+	}
+	if user.Username == "" {
+		return nil, errors.New("username is required")
+	}
+	if user.Email == "" {
+		return nil, errors.New("email is required")
+	}
+
+	// Create a prepared statement to update the user
+	stmt, err := db.Prepare("UPDATE users SET username=?, email=? WHERE id=?")
+	if err != nil {
+		return nil, err // Failed to prepare statement
+	}
+	defer stmt.Close()
+
+	// Execute the prepared statement with user data
+	_, err = stmt.Exec(user.Username, user.Email, id)
+	if err != nil {
+		return nil, err // Failed to insert user into database
+	}
+
+	// Return the created user
+	createdUser := &api.ResForCreateUser{
+		Username: user.Username,
+		Email:    user.Email,
+	}
+	return createdUser, nil
+}
+
 func GetUser(db *sql.DB, user *api.ResForLogin) (*api.DBUser, error) {
 	if user == nil {
 		return nil, errors.New("user object is nil")

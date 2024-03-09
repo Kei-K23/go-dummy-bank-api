@@ -9,7 +9,8 @@ import (
 	"github.com/Kei-K23/go-dummy-bank-api/internal/services"
 )
 
-func LoginHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func LoginHandler(db *sql.DB) http.HandlerFunc{
+	return func(w http.ResponseWriter, r *http.Request) {
 		credential := api.ReqForLogin{}
 
 		err := json.NewDecoder(r.Body).Decode(&credential)
@@ -39,4 +40,5 @@ func LoginHandler(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 			api.ErrInternalServer(w , err)
             return
 		}
-	}
+	}	
+}

@@ -6,9 +6,11 @@ import (
 	"net/http"
 
 	"github.com/Kei-K23/go-dummy-bank-api/api"
+	"github.com/Kei-K23/go-dummy-bank-api/internal/middleware"
 )
 
 func APIHandler(mux *http.ServeMux, db *sql.DB)  {
+
 	mux.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
 		res , err := json.Marshal(map[string]string{
 			"message" : "Hello, world",
@@ -29,15 +31,15 @@ func APIHandler(mux *http.ServeMux, db *sql.DB)  {
 		}
 	})
 
-	mux.HandleFunc("GET /users/{id}", func(w http.ResponseWriter, r *http.Request) {
-		GetUserHandler(w, r, db)
-	})
+	mux.Handle("GET /users/{id}", middleware.Logger(middleware.CheckAuthHeader(
+		http.HandlerFunc(GetUserHandler(db)),
+	)))
+
 	
-	mux.HandleFunc("POST /users", func(w http.ResponseWriter, r *http.Request) {
-		CreateUserHandler(w, r, db)
-	})
+	mux.Handle("POST /users", middleware.Logger(http.HandlerFunc(CreateUserHandler(db))))
+
+	mux.Handle("PUT /users/{id}", middleware.Logger(http.HandlerFunc(UpdateUserHandler(db))))
 	
-	mux.HandleFunc("POST /login", func(w http.ResponseWriter, r *http.Request) {
-		LoginHandler(w, r, db)
-	} )
+	mux.Handle("POST /login", middleware.Logger(http.HandlerFunc(LoginHandler(db))))
 }
+
