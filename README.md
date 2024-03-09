@@ -19,7 +19,7 @@ This is a simple bank API implemented in Go using `net/http` standard library.
 1. Clone this repository to your local machine:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Kei-K23/go-dummy-bank-api.git
 ```
 
 2. Navigate to the project directory:
