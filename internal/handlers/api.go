@@ -34,8 +34,11 @@ func APIHandler(mux *http.ServeMux, db *sql.DB)  {
 	mux.Handle("GET /users/{id}", middleware.Logger(middleware.CheckAuthHeader(
 		http.HandlerFunc(GetUserHandler(db)),
 	)))
-
 	
+	mux.Handle("GET /users/{id}/balance", middleware.Logger(middleware.CheckAuthHeader(
+		http.HandlerFunc(GetBalanceHandler(db)),
+	)))
+
 	mux.Handle("POST /users", middleware.Logger(http.HandlerFunc(CreateUserHandler(db))))
 
 	mux.Handle("PUT /users/{id}", middleware.Logger(http.HandlerFunc(UpdateUserHandler(db))))

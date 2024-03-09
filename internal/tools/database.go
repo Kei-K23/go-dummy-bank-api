@@ -40,6 +40,7 @@ func createUsersTable(db *sql.DB)  {
 			email VARCHAR(255) NOT NULL UNIQUE,
 			password VARCHAR(255) NOT NULL,
 			access_token VARCHAR(255) NOT NULL UNIQUE,
+			balance INTEGER NOT NULL DEFAULT 500,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)

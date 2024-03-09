@@ -167,3 +167,45 @@ func GetUserHandler(db *sql.DB) http.HandlerFunc {
         }
     }
 }
+
+func GetBalanceHandler(db *sql.DB) http.HandlerFunc {
+    return func(w http.ResponseWriter, r *http.Request) {
+        id := r.PathValue("id")
+
+        authHeader := strings.Split(r.Header.Get("Authorization"), " ")[1] 
+        
+        if id == "" { 
+            newErr := errors.New("id parameter is required")
+            api.ErrBadRequest(w, newErr)
+            return
+        }
+
+        user := api.ResForLogin{
+            Id:          id,
+            AccessToken: authHeader,
+        }
+    
+        resBalance, err := services.GetBalance(db, &user)
+
+        if err != nil {
+            api.ErrInternalServer(w, err)
+            return
+        }
+
+        resJson, err := json.Marshal(resBalance)
+
+        if err != nil {
+            api.ErrInternalServer(w, err)
+            return
+        }
+
+        w.Header().Set("Content-Type", "application/json")
+        w.WriteHeader(http.StatusOK)
+
+        _, err = w.Write(resJson)
+        if err != nil { 
+            api.ErrInternalServer(w, err)
+            return
+        }
+    }
+}

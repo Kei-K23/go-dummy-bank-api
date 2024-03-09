@@ -18,6 +18,7 @@ type DBUser struct {
 	Email string `json:"email"`
 	Password string `json:"password"`
 	AccessToken string `json:"access_token"`
+	Balance int `json:"balance"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
 }
@@ -36,6 +37,11 @@ type ReqForLogin struct {
 type ResForLogin struct { 
 	Id string `json:"id"`
     AccessToken string `json:"access_token"`
+}
+
+type Balance struct {
+	Username string `json:"username"`
+	Balance int `json:"balance"`
 }
 
 // error
