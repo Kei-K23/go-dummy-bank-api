@@ -178,6 +178,56 @@ func WithdrawAccountHandler(db *sql.DB) http.HandlerFunc{
      }
 }
 
+func TransferBalanceHandler(db *sql.DB) http.HandlerFunc{
+     return func(w http.ResponseWriter, r *http.Request) { 
+        fromId := r.PathValue("fromId")
+        toId := r.PathValue("toId")
+
+        if fromId == "" {
+            newErr := errors.New("fromId is required")
+            api.ErrBadRequest(w, newErr)
+			return
+        }
+        
+		if toId == "" {
+            newErr := errors.New("toId is required")
+            api.ErrBadRequest(w, newErr)
+			return
+        }
+
+        acc := api.Account{}
+
+		err := json.NewDecoder(r.Body).Decode(&acc)
+		if err != nil {
+			api.ErrBadRequest(w, err)
+			return
+		}
+
+		resAcc, err := services.TransferBalance(db , acc.Balance, fromId, toId)
+
+		if err != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+
+		resJson, err := json.Marshal(resAcc)
+
+		if err != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		_ , err = w.Write(resJson)
+		if err != nil { 
+			api.ErrInternalServer(w , err)
+            return
+		}
+     }
+}
+
 func DeleteAccountHandler(db *sql.DB) http.HandlerFunc{
      return func(w http.ResponseWriter, r *http.Request) { 
         id := r.PathValue("id")

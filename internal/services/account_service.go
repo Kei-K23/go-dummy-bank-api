@@ -140,6 +140,63 @@ func WithdrawAccount(db *sql.DB, balance int, id string) (*api.Success, error) {
 	return updatedAcc, nil
 }
 
+func TransferBalance(db *sql.DB, balance int, fromId , toId string) (*api.Success, error) {
+	// Perform some basic validation
+	if fromId == "" {
+		return nil, errors.New("from id is required")
+	}
+	if toId == "" {
+		return nil, errors.New("to id is required")
+	}
+	if balance == 0 {
+		return nil, errors.New("balance is required")
+	}
+
+	fromAccExistingBalance, fromAccErr := getBalance(db , fromId)
+	toAccExistingBalance, toAccErr := getBalance(db , toId)
+	if fromAccErr!= nil {
+        return nil, fromAccErr
+    }
+	if toAccErr!= nil {
+        return nil, toAccErr
+    }
+
+	if fromAccExistingBalance < balance {
+		return nil, errors.New("insufficient balance")
+	}
+
+	stmtForFromAcc, err := db.Prepare("UPDATE accounts SET balance=? WHERE id=?")
+	if err != nil {
+		return nil, err 
+	}
+	defer stmtForFromAcc.Close()
+
+	stmtForToAcc, err := db.Prepare("UPDATE accounts SET balance=? WHERE id=?")
+	if err != nil {
+		return nil, err 
+	}
+	defer stmtForToAcc.Close()
+
+	fromAccNewBalance := fromAccExistingBalance - balance
+	toAccNewBalance := toAccExistingBalance + balance
+
+	_, err = stmtForFromAcc.Exec(fromAccNewBalance, fromId)
+	if err != nil {
+		return nil, err 
+	}
+	
+	_, err = stmtForToAcc.Exec(toAccNewBalance, toId)
+	if err != nil {
+		return nil, err 
+	}
+
+	updatedAcc := &api.Success{
+		Message: fmt.Sprintf("total balance for account id %s is %d and total balance for account id %s is %d", fromId, fromAccNewBalance, toId, toAccNewBalance),
+		Code: http.StatusOK,
+	} 
+	return updatedAcc, nil
+}
+
 
 func DeleteAccount(db *sql.DB, id string) (*api.Success, error) {
 

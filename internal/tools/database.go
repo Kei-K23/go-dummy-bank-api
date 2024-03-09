@@ -59,7 +59,7 @@ func createAccountTable(db *sql.DB)  {
 		CREATE TABLE IF NOT EXISTS accounts (
 			id VARCHAR(255) PRIMARY KEY NOT NULL,
 			account_number VARCHAR(255) NOT NULL UNIQUE,
-			balance INTEGER NOT NULL UNIQUE,
+			balance INTEGER NOT NULL,
 			user_id VARCHAR(255) NOT NULL,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
