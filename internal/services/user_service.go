@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"net/http"
 
 	"github.com/Kei-K23/go-dummy-bank-api/api"
 	"github.com/google/uuid"
@@ -56,7 +57,7 @@ func CreateUser(db *sql.DB, user *api.User) (*api.ResForCreateUser, error) {
 	return createdUser, nil
 }
 
-// CreateUser creates a new user.
+// UpdateUser update the user.
 func UpdateUser(db *sql.DB, user *api.ResForCreateUser, id string) (*api.ResForCreateUser, error) {
 	// Perform some basic validation
 	if user == nil {
@@ -86,6 +87,31 @@ func UpdateUser(db *sql.DB, user *api.ResForCreateUser, id string) (*api.ResForC
 	createdUser := &api.ResForCreateUser{
 		Username: user.Username,
 		Email:    user.Email,
+	}
+	return createdUser, nil
+}
+
+
+// DeleteUser delete user.
+func DeleteUser(db *sql.DB, id string) (*api.Success, error) {
+
+	// Create a prepared statement to update the user
+	stmt, err := db.Prepare("DELETE FROM users WHERE id=?")
+	if err != nil {
+		return nil, err // Failed to prepare statement
+	}
+	defer stmt.Close()
+
+	// Execute the prepared statement with user data
+	_, err = stmt.Exec(id)
+	if err != nil {
+		return nil, err // Failed to insert user into database
+	}
+
+	// Return the created user
+	createdUser := &api.Success{
+		Message: fmt.Sprintf("user with id %s deleted", id),
+		Code: http.StatusOK,
 	}
 	return createdUser, nil
 }

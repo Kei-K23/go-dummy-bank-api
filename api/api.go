@@ -44,6 +44,11 @@ type Error struct {
 	Code int `json:"code"`
 }
 
+type Success struct { 
+	Message string `json:"message"`
+	Code int `json:"code"`
+}
+
 // error message
 func writeError (w http.ResponseWriter, msg string, code int) {
 	res := Error{

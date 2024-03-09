@@ -90,6 +90,41 @@ func UpdateUserHandler(db *sql.DB) http.HandlerFunc{
      }
 }
 
+func DeleteUserHandler(db *sql.DB) http.HandlerFunc{
+     return func(w http.ResponseWriter, r *http.Request) { 
+        id := r.PathValue("id")
+
+        if id == "" {
+            newErr := errors.New("id is required")
+            api.ErrBadRequest(w, newErr)
+			return
+        }
+
+		resUser, err := services.DeleteUser(db, id)
+
+		if err != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+
+		resJson, err := json.Marshal(resUser)
+
+		if err != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		_ , err = w.Write(resJson)
+		if err != nil { 
+			api.ErrInternalServer(w , err)
+            return
+		}
+     }
+}
+
 // GetUserHandler returns an HTTP handler function that retrieves user data from the database
 func GetUserHandler(db *sql.DB) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {

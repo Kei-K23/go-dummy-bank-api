@@ -40,6 +40,8 @@ func APIHandler(mux *http.ServeMux, db *sql.DB)  {
 
 	mux.Handle("PUT /users/{id}", middleware.Logger(http.HandlerFunc(UpdateUserHandler(db))))
 	
+	mux.Handle("DELETE /users/{id}", middleware.Logger(http.HandlerFunc(DeleteUserHandler(db))))
+	
 	mux.Handle("POST /login", middleware.Logger(http.HandlerFunc(LoginHandler(db))))
 }
 
