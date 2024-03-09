@@ -111,6 +111,11 @@ func DepositAccountHandler(db *sql.DB) http.HandlerFunc{
 		}
 
 		resAcc, err := services.DepositAccount(db , acc.Balance, id)
+		tranErr := services.CreateTransition(db, acc.Balance, "deposit", id)
+		if tranErr != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
 
 		if err != nil {
 			api.ErrInternalServer(w, err)
@@ -154,6 +159,11 @@ func WithdrawAccountHandler(db *sql.DB) http.HandlerFunc{
 		}
 
 		resAcc, err := services.WithdrawAccount(db , acc.Balance, id)
+		tranErr := services.CreateTransition(db, acc.Balance, "withdraw", id)
+		if tranErr != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
 
 		if err != nil {
 			api.ErrInternalServer(w, err)
@@ -204,6 +214,16 @@ func TransferBalanceHandler(db *sql.DB) http.HandlerFunc{
 		}
 
 		resAcc, err := services.TransferBalance(db , acc.Balance, fromId, toId)
+		tranErr1 := services.CreateTransition(db, acc.Balance, "transfer", fromId)
+		if tranErr1 != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+		tranErr2 := services.CreateTransition(db, acc.Balance, "receive", toId)
+		if tranErr2 != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
 
 		if err != nil {
 			api.ErrInternalServer(w, err)

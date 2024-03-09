@@ -31,6 +31,15 @@ type DBAccount struct {
 	UpdatedAt string `json:"updated_at"`
 }
 
+type DBTransitions struct {
+	Id string `json:"id"`
+	Type string `json:"type"`
+	Amount int `json:"amount"`
+	AccountId string `json:"account_id"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
 type Account struct {
 	AccountNumber string `json:"account_number"`
 	Balance int `json:"balance"`
@@ -68,6 +77,8 @@ type Success struct {
 	Message string `json:"message"`
 	Code int `json:"code"`
 }
+
+
 
 // error message
 func writeError (w http.ResponseWriter, msg string, code int) {
