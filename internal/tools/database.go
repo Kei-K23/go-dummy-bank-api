@@ -28,6 +28,8 @@ func ConnectToDB() (*sql.DB) {
     }
 
 	createUsersTable(db)
+	createAccountTable(db)
+	createTransitionsTable(db)
 
 	return db
 }
@@ -40,7 +42,6 @@ func createUsersTable(db *sql.DB)  {
 			email VARCHAR(255) NOT NULL UNIQUE,
 			password VARCHAR(255) NOT NULL,
 			access_token VARCHAR(255) NOT NULL UNIQUE,
-			balance INTEGER NOT NULL DEFAULT 500,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 		)
@@ -50,5 +51,45 @@ func createUsersTable(db *sql.DB)  {
 		log.Fatal("Error creating users table :" , err)
 	}
 
-	fmt.Println("Users table created")
+	fmt.Println("users table created")
+}
+
+func createAccountTable(db *sql.DB)  {
+	_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS accounts (
+			id VARCHAR(255) PRIMARY KEY NOT NULL,
+			account_number VARCHAR(255) NOT NULL UNIQUE,
+			balance INTEGER NOT NULL UNIQUE,
+			user_id VARCHAR(255) NOT NULL,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY (user_id) REFERENCES users(id)
+		)
+	`)
+
+	if err != nil {
+		log.Fatal("Error creating account table :" , err)
+	}
+
+	fmt.Println("accounts table created")
+}
+
+func createTransitionsTable(db *sql.DB)  {
+	_, err := db.Exec(`
+		CREATE TABLE IF NOT EXISTS transitions (
+			id VARCHAR(255) PRIMARY KEY NOT NULL,
+			type VARCHAR(255) NOT NULL,
+			amount INTEGER NOT NULL,
+			account_id VARCHAR(255) NOT NULL,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY (account_id) REFERENCES accounts(id)
+		)
+	`)
+
+	if err != nil {
+		log.Fatal("Error creating transitions table :" , err)
+	}
+
+	fmt.Println("transitions table created")
 }

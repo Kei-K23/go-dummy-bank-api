@@ -12,24 +12,26 @@ import (
 )
 
 
-func CreateUserHandler(db *sql.DB) http.HandlerFunc{
+func CreateAccountHandler(db *sql.DB) http.HandlerFunc{
      return func(w http.ResponseWriter, r *http.Request) { 
-		user := api.User{}
+		account := struct {
+			UserId string `json:"user_id"`
+		} {	}
 
-		err := json.NewDecoder(r.Body).Decode(&user)
+		err := json.NewDecoder(r.Body).Decode(&account)
 		if err != nil {
 			api.ErrBadRequest(w, err)
 			return
 		}
 
-		resUser, err := services.CreateUser(db , &user)
+		resAcc, err := services.CreateAccount(db , account.UserId)
 
 		if err != nil {
 			api.ErrInternalServer(w, err)
             return
 		}
 
-		resJson, err := json.Marshal(resUser)
+		resJson, err := json.Marshal(resAcc)
 
 		if err != nil {
 			api.ErrInternalServer(w, err)
@@ -47,7 +49,7 @@ func CreateUserHandler(db *sql.DB) http.HandlerFunc{
      }
 }
 
-func UpdateUserHandler(db *sql.DB) http.HandlerFunc{
+func UpdateAccountHandler(db *sql.DB) http.HandlerFunc{
      return func(w http.ResponseWriter, r *http.Request) { 
         id := r.PathValue("id")
 
@@ -57,22 +59,22 @@ func UpdateUserHandler(db *sql.DB) http.HandlerFunc{
 			return
         }
 
-        user := api.ResForCreateUser{}
+        acc := api.Account{}
 
-		err := json.NewDecoder(r.Body).Decode(&user)
+		err := json.NewDecoder(r.Body).Decode(&acc)
 		if err != nil {
 			api.ErrBadRequest(w, err)
 			return
 		}
 
-		resUser, err := services.UpdateUser(db , &user, id)
+		resAcc, err := services.UpdateAccount(db , acc.Balance, id)
 
 		if err != nil {
 			api.ErrInternalServer(w, err)
             return
 		}
 
-		resJson, err := json.Marshal(resUser)
+		resJson, err := json.Marshal(resAcc)
 
 		if err != nil {
 			api.ErrInternalServer(w, err)
@@ -90,7 +92,7 @@ func UpdateUserHandler(db *sql.DB) http.HandlerFunc{
      }
 }
 
-func DeleteUserHandler(db *sql.DB) http.HandlerFunc{
+func DeleteAccountHandler(db *sql.DB) http.HandlerFunc{
      return func(w http.ResponseWriter, r *http.Request) { 
         id := r.PathValue("id")
 
@@ -100,7 +102,7 @@ func DeleteUserHandler(db *sql.DB) http.HandlerFunc{
 			return
         }
 
-		resUser, err := services.DeleteUser(db, id)
+		resUser, err := services.DeleteAccount(db, id)
 
 		if err != nil {
 			api.ErrInternalServer(w, err)
@@ -125,8 +127,7 @@ func DeleteUserHandler(db *sql.DB) http.HandlerFunc{
      }
 }
 
-
-func GetUserHandler(db *sql.DB) http.HandlerFunc {
+func GetAccountHandler(db *sql.DB) http.HandlerFunc {
     return func(w http.ResponseWriter, r *http.Request) {
         id := r.PathValue("id")
 
@@ -138,19 +139,19 @@ func GetUserHandler(db *sql.DB) http.HandlerFunc {
             return
         }
 
-        user := api.ResForLogin{
+        acc := api.ResForLogin{
             Id:          id,
             AccessToken: authHeader,
         }
     
-        resUser, err := services.GetUser(db, &user)
+        resAcc, err := services.GetAccount(db, &acc)
 
         if err != nil {
             api.ErrInternalServer(w, err)
             return
         }
 
-        resJson, err := json.Marshal(resUser)
+        resJson, err := json.Marshal(resAcc)
 
         if err != nil {
             api.ErrInternalServer(w, err)

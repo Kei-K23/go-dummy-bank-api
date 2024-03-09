@@ -18,9 +18,23 @@ type DBUser struct {
 	Email string `json:"email"`
 	Password string `json:"password"`
 	AccessToken string `json:"access_token"`
-	Balance int `json:"balance"`
 	CreatedAt string `json:"created_at"`
 	UpdatedAt string `json:"updated_at"`
+}
+
+type DBAccount struct {
+	Id string `json:"id"`
+	AccountNumber string `json:"account_number"`
+	Balance int `json:"balance"`
+	UserId string `json:"user_id"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+}
+
+type Account struct {
+	AccountNumber string `json:"account_number"`
+	Balance int `json:"balance"`
+	UserId string `json:"user_id"`
 }
 
 // response data for create user

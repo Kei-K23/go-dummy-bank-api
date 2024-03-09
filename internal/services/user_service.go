@@ -108,11 +108,11 @@ func DeleteUser(db *sql.DB, id string) (*api.Success, error) {
 	}
 
 	// Return the created user
-	createdUser := &api.Success{
+	res := &api.Success{
 		Message: fmt.Sprintf("user with id %s deleted", id),
 		Code: http.StatusOK,
 	}
-	return createdUser, nil
+	return res, nil
 }
 
 func GetUser(db *sql.DB, user *api.ResForLogin) (*api.DBUser, error) {
@@ -135,7 +135,7 @@ func GetUser(db *sql.DB, user *api.ResForLogin) (*api.DBUser, error) {
 	// Execute the SQL statement to retrieve user information
 	var fetchedUser api.DBUser
 
-	err = stmt.QueryRow(user.Id, user.AccessToken).Scan(&fetchedUser.Id, &fetchedUser.Username, &fetchedUser.Email, &fetchedUser.Password, &fetchedUser.AccessToken, &fetchedUser.Balance, &fetchedUser.CreatedAt, &fetchedUser.UpdatedAt)
+	err = stmt.QueryRow(user.Id, user.AccessToken).Scan(&fetchedUser.Id, &fetchedUser.Username, &fetchedUser.Email, &fetchedUser.Password, &fetchedUser.AccessToken, &fetchedUser.CreatedAt, &fetchedUser.UpdatedAt)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			// User with the provided email not found
@@ -146,37 +146,4 @@ func GetUser(db *sql.DB, user *api.ResForLogin) (*api.DBUser, error) {
 	}
 	
 	return &fetchedUser, nil
-}
-
-func GetBalance(db *sql.DB, user *api.ResForLogin) (*api.Balance, error) {
-	if user == nil {
-		return nil, errors.New("user object is nil")
-	}
-	if user.Id == "" {
-		return nil, errors.New("id is required")
-	}
-	if user.AccessToken == "" {
-		return nil, errors.New("accessToken is required")
-	}
-
-	stmt, err := db.Prepare("SELECT username, balance FROM users WHERE id = ? AND access_token = ?")
-	if err != nil {
-		return nil, err // Failed to prepare statement
-	}
-	defer stmt.Close()
-
-	// Execute the SQL statement to retrieve user information
-	var fetchedBalance api.Balance
-
-	err = stmt.QueryRow(user.Id, user.AccessToken).Scan(&fetchedBalance.Username, &fetchedBalance.Balance)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			// User with the provided email not found
-			fmt.Println(err.Error())
-			return nil, errors.New("balance not found")
-		}
-		return nil, err // Other error occurred
-	}
-	
-	return &fetchedBalance, nil
 }
