@@ -92,6 +92,92 @@ func UpdateAccountHandler(db *sql.DB) http.HandlerFunc{
      }
 }
 
+func DepositAccountHandler(db *sql.DB) http.HandlerFunc{
+     return func(w http.ResponseWriter, r *http.Request) { 
+        id := r.PathValue("id")
+
+        if id == "" {
+            newErr := errors.New("id is required")
+            api.ErrBadRequest(w, newErr)
+			return
+        }
+
+        acc := api.Account{}
+
+		err := json.NewDecoder(r.Body).Decode(&acc)
+		if err != nil {
+			api.ErrBadRequest(w, err)
+			return
+		}
+
+		resAcc, err := services.DepositAccount(db , acc.Balance, id)
+
+		if err != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+
+		resJson, err := json.Marshal(resAcc)
+
+		if err != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		_ , err = w.Write(resJson)
+		if err != nil { 
+			api.ErrInternalServer(w , err)
+            return
+		}
+     }
+}
+
+func WithdrawAccountHandler(db *sql.DB) http.HandlerFunc{
+     return func(w http.ResponseWriter, r *http.Request) { 
+        id := r.PathValue("id")
+
+        if id == "" {
+            newErr := errors.New("id is required")
+            api.ErrBadRequest(w, newErr)
+			return
+        }
+
+        acc := api.Account{}
+
+		err := json.NewDecoder(r.Body).Decode(&acc)
+		if err != nil {
+			api.ErrBadRequest(w, err)
+			return
+		}
+
+		resAcc, err := services.WithdrawAccount(db , acc.Balance, id)
+
+		if err != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+
+		resJson, err := json.Marshal(resAcc)
+
+		if err != nil {
+			api.ErrInternalServer(w, err)
+            return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+
+		_ , err = w.Write(resJson)
+		if err != nil { 
+			api.ErrInternalServer(w , err)
+            return
+		}
+     }
+}
+
 func DeleteAccountHandler(db *sql.DB) http.HandlerFunc{
      return func(w http.ResponseWriter, r *http.Request) { 
         id := r.PathValue("id")

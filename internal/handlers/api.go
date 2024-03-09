@@ -48,6 +48,10 @@ func APIHandler(mux *http.ServeMux, db *sql.DB)  {
 	mux.Handle("POST /accounts", middleware.Logger(middleware.CheckAuthHeader(http.HandlerFunc(CreateAccountHandler(db)))))
 
 	mux.Handle("PUT /accounts/{id}", middleware.Logger(http.HandlerFunc(UpdateAccountHandler(db))))
+
+	mux.Handle("POST /accounts/{id}/deposit", middleware.Logger(http.HandlerFunc(DepositAccountHandler(db))))
+
+	mux.Handle("POST /accounts/{id}/withdraw", middleware.Logger(http.HandlerFunc(WithdrawAccountHandler(db))))
 	
 	mux.Handle("DELETE /accounts/{id}", middleware.Logger(http.HandlerFunc(DeleteAccountHandler(db))))
 	
