@@ -1,12 +1,12 @@
 # Go Dummy Bank API
 
-This is a simple bank API implemented in Go.
+This is a simple bank API implemented in Go using `net/http` standard library.
 
 ## Features
 
 - User management: Create, read, update, delete user accounts
 - Account management: Create, read, update, delete bank accounts, deposit, withdraw, transfer funds
-- Transaction management: Record deposit, withdrawal, and fund transfer transactions, retrieve transaction history
+- Transaction management: retrieve transaction history
 
 ## Prerequisites
 
